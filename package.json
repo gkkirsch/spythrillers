@@ -3,9 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase": "^7.2.1",
+    "js-cookie": "^2.2.1",
     "react": "^16.10.2",
+    "react-animations": "^1.0.0",
+    "react-code-input": "^3.8.1",
     "react-dom": "^16.10.2",
-    "react-scripts": "3.2.0"
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.2.0",
+    "styled-components": "^4.4.0",
+    "uifx": "^2.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -88,7 +88,7 @@ function Player() {
     }
   }
 
-  if (loading) return <div>Loading</div>;
+  if (loading) return <Wrapper></Wrapper>;
 
   return (
     <Wrapper>

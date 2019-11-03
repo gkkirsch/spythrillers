@@ -8,6 +8,7 @@ import sounds from 'audio/sounds';
 
 const GAME = Cookies.get('game');
 let mutePlayers = true
+
 setTimeout(() => {
   mutePlayers = false
 }, 5000)
@@ -26,6 +27,7 @@ function MainDisplay() {
   const firebase = useFirebase();
   const [gameCode, setGameCode] = useState("");
   const [players, setPlayers] = useState([]);
+  const [loading, setLoading] = useState(true);
   let order = 1
 
   const updatePlayers = (snapshot) => {
@@ -40,7 +42,24 @@ function MainDisplay() {
   }
 
   useEffect(() => {
-    (async function() {
+    const image = new Image()
+    image.src = logo;
+
+    setTimeout(() => {
+      setLoading(false)
+      const audio = sounds.intro.play()
+      document.body.onkeyup = (e) => {
+        if(e.keyCode == 32){
+          if (audio.player.paused) {
+            audio.player.play()
+          } else {
+            audio.player.pause()
+          }
+        }
+      }
+    }, 1000)
+
+    const setup = async () => {
       if (!GAME) {
         const result = await firebase.firestore.collection('game-codes').limit(1).get()
         const gameCodeRef = result.docs[0]
@@ -56,17 +75,8 @@ function MainDisplay() {
         firebase.listen(`games.${GAME}.players`, updatePlayers)
         firebase.listen(`games.${GAME}.selectedAvatars`, playCharacterSound)
       }
-    })()
-    const audio = sounds.intro.play()
-    document.body.onkeyup = (e) => {
-      if(e.keyCode == 32){
-        if (audio.player.paused) {
-          audio.player.play()
-        } else {
-          audio.player.pause()
-        }
-      }
     }
+    setup()
   }, [firebase])
 
   const renderPlayers = () => {
@@ -80,7 +90,7 @@ function MainDisplay() {
       )
     })
   }
-
+  if (loading) return <Wrapper />
   return (
     <Wrapper>
       <Header>

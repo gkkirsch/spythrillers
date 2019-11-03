@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
@@ -7,8 +7,16 @@ import {
 } from "react-router-dom";
 import Player from './components/Player'
 import MainDisplay from './components/MainDisplay'
+import images from 'components/characters'
 
 function App() {
+  useEffect(() => {
+    Object.values(images).forEach((src) => {
+      const image = new Image()
+      image.src = src;
+    });
+  })
+
   return (
     <Router>
       <Switch>

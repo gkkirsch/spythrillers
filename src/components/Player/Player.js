@@ -13,8 +13,8 @@ const Wrapper = styled.div`
   justify-content: center;
 `;
 
-function Player() {
 
+function Player() {
   const [game, setGame] = useState({})
   const [player, setPlayer] = useState({})
   const [loading, setLoading] = useState(true)

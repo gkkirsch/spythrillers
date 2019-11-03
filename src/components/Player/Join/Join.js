@@ -1,9 +1,22 @@
 import React, { useState } from 'react';
 import { Wrapper, Logo, Header, Input, Heading, Submit, Joining, Error } from './JoinStyles';
 import { useFirebase } from 'components/Firebase';
-import logo from 'images/spy-thrillers.jpg';
+import logo from 'images/spy-thrillers-small.jpg';
 import CodeInput from './CodeInput';
 
+// function toggleFullScreen() {
+//   try {
+//     var doc = window.document;
+//     var docEl = doc.documentElement;
+//
+//     var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+//
+//     if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+//       requestFullScreen.call(docEl);
+//     }
+//   } catch {
+//   }
+// }
 
 function Join({onJoin, onLeave}) {
   const firebase = useFirebase();
@@ -40,7 +53,7 @@ function Join({onJoin, onLeave}) {
     if (!game) return [false, "A game with that code hasn't been started.", null]
 
     const isUnique = await nameIsUnique()
-    if (!isUnique) return [false, "What are the chances!!! Your name has been stolen. Pick another.", null]
+    if (!isUnique) return [false, "What are the chances!!! Someone else's mother used that same name.", null]
 
     // Success
     const playerRef = await firebase.firestore.collection('games').doc(gameCode).collection('players').doc()

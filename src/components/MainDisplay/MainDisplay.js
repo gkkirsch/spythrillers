@@ -49,7 +49,7 @@ function MainDisplay() {
       setLoading(false)
       const audio = sounds.intro.play()
       document.body.onkeyup = (e) => {
-        if(e.keyCode == 32){
+        if(e.keyCode === 32){
           if (audio.player.paused) {
             audio.player.play()
           } else {
@@ -65,7 +65,7 @@ function MainDisplay() {
         const gameCodeRef = result.docs[0]
         const { code } = gameCodeRef.data()
         setGameCode(code)
-        const gameSet = await firebase.set(`games.${code}`, { locationSetId: 1, gamePhase: "GATHER_FRIENDS", code })
+        await firebase.set(`games.${code}`, { locationSetId: 1, gamePhase: "GATHER_FRIENDS", code })
         firebase.listen(`games.${code}.players`, updatePlayers)
         firebase.listen(`games.${code}.selectedAvatars`, playCharacterSound)
         gameCodeRef.ref.delete()

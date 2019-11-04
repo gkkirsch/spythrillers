@@ -9,6 +9,7 @@ export const Joining = styled.div`
 `;
 
 export const Error = styled.div`
+  text-align: center;
   color: #e22816;
   padding-top: 16px;
   font-size: 15px;
@@ -26,10 +27,13 @@ export const Wrapper = styled.div`
 `;
 
 export const Header = styled.div`
+  display: flex;
+  justify-content: center;
   transition: all 1s ease-out;
   position: relative;
   padding-top: 24px;
-  width: 90%;
+  margin-right: 8px;
+  margin-left: 8px;
 `;
 
 export const Logo = styled.img`
@@ -54,7 +58,7 @@ export const Submit = styled.div`
   animation: .3s ${slideInRightAnimation};
   font-size: 24px;
   font-weight: 800;
-  margin-top: 32px;
+  margin-top: 8px;
   width: 134px;
   border-radius: 3px;
   align-items: center;
@@ -90,6 +94,6 @@ export const Input = styled.input`
   border-radius: 0;
   -webkit-appearance: none;
   height: 47px;
-  width: 62%;
   font-size: 29px;
+  width: 240px;
 `;

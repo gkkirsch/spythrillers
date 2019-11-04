@@ -12,15 +12,15 @@ import panic from 'audio/panic.mp3';
 import manCough from 'audio/man-couph.mp3';
 
 export default {
-  intro: new UIfx(soundtrack, { volume: 0.4, throttleMs: 100 }),
-  ladyRed: new UIfx(womanLaugh, { volume: 0.4, throttleMs: 100 }),
-  asia: new UIfx(laughShort, { volume: 0.4, throttleMs: 100 }),
-  midge: new UIfx(bahumbug, { volume: 0.4, throttleMs: 100 }),
-  officerDope: new UIfx(letMeAtHim, { volume: 0.4, throttleMs: 100 }),
-  dahlia: new UIfx(shhhh, { volume: 0.4, throttleMs: 100 }),
-  dudeManGuy: new UIfx(butter, { volume: 0.4, throttleMs: 100 }),
-  jawbone: new UIfx(somethingsHappening, { volume: 0.4, throttleMs: 100 }),
-  mike: new UIfx(gdayMate, { volume: 0.4, throttleMs: 100 }),
-  roger: new UIfx(manCough, { volume: 0.4, throttleMs: 100 }),
-  tom: new UIfx(panic, { volume: 0.4, throttleMs: 100 })
+  intro: new UIfx(soundtrack, { volume: 1, throttleMs: 100 }),
+  ladyRed: new UIfx(womanLaugh, { volume: 1, throttleMs: 100 }),
+  asia: new UIfx(laughShort, { volume: 1, throttleMs: 100 }),
+  midge: new UIfx(bahumbug, { volume: 1, throttleMs: 100 }),
+  officerDope: new UIfx(letMeAtHim, { volume: 1, throttleMs: 100 }),
+  dahlia: new UIfx(shhhh, { volume: 1, throttleMs: 100 }),
+  dudeManGuy: new UIfx(butter, { volume: 1, throttleMs: 100 }),
+  jawbone: new UIfx(somethingsHappening, { volume: 1, throttleMs: 100 }),
+  mike: new UIfx(gdayMate, { volume: 1, throttleMs: 100 }),
+  roger: new UIfx(manCough, { volume: 1, throttleMs: 100 }),
+  tom: new UIfx(panic, { volume: 1, throttleMs: 100 })
 };

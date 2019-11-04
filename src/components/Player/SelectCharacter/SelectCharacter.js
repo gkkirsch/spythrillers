@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import {
+  Heading,
+  Wrapper,
+  PlayersWrapper,
+  Player,
+  PlayerTaken,
+  Dim
+} from './SelectCharacterStyles.js';
 import { useFirebase } from 'components/Firebase';
-
-const Wrapper = styled.div`
-  height: 100vh;
-  background-repeat: no-repeat;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Avatar = styled.div`
-  width: 25px;
-  height: 25px;
-  background-color: gray;
-`;
+import images from 'components/characters'
 
 function SelectCharacter({game, player}) {
   const firebase = useFirebase();
@@ -41,6 +36,7 @@ function SelectCharacter({game, player}) {
   }
 
   useEffect(() => {
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
     const unsubscribe = firebase.listen(`games.${game.code}.selectedAvatars`, avatarSelected)
     const getAvatars = async () => {
       const result = await firebase.collectionAsList('avatars')
@@ -51,32 +47,39 @@ function SelectCharacter({game, player}) {
     return () => unsubscribe();
   }, [firebase, game.code])
 
-  const handleAvatarClick = (avatarName) => () => {
-    firebase.set(`games.${game.code}.selectedAvatars.${avatarName}`, {used: true})
-    firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName}, {merge: true})
+  const handleAvatarClick = (avatarName) => async () => {
+    firebase.set(`games.${game.code}.selectedAvatars.${avatarName}`, {used: true}, {merge: true})
+    const playersExist = await firebase.exists(`games.${game.code}.players`)
+    if (!playersExist) {
+      firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: true}, {merge: true})
+    } else {
+      firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: false}, {merge: true})
+    }
   }
 
   const renderAvatars = () => {
     return availableAvatars().map((avatar) => {
       if (!avatar.used) {
         return (
-          <Avatar key={avatar.id} id={avatar.id} onClick={handleAvatarClick(avatar.id)}>
-            {avatar.id}
-          </Avatar>
+          <Player key={avatar.id} onClick={handleAvatarClick(avatar.id)} src={images[avatar.id]} />
         )
       }
       return (
-        <Avatar taken key={avatar.id} id={avatar.id}>
-          {avatar.id}
-        </Avatar>
+        <Dim>
+          <PlayerTaken key={avatar.id} src={images[avatar.id]} />
+        </Dim>
       )
     })
   }
 
   return (
     <Wrapper>
-      Select Your Character
-      {renderAvatars()}
+      <Heading>
+        Select Your Character
+      </Heading>
+      <PlayersWrapper>
+        {renderAvatars()}
+      </PlayersWrapper>
     </Wrapper>
   )
 }

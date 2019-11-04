@@ -32,13 +32,12 @@ export const Logo = styled.img`
 
 export const GameCode = styled.div`
   transition: all 1s ease-out;
-  animation: 2s ${pulseAnimation} 20;
+  animation: 1.6s ${pulseAnimation} infinite;
   animation-delay: 7s;
   text-transform: uppercase;
   color: #F3DE21;
   font-weight: 700;
   font-size: 3vw;
-  font-style: italic;
 `;
 
 export const SubText = styled.div`
@@ -61,12 +60,12 @@ export const Player = styled.img`
 `;
 
 export const AnimateCode = styled.div`
-  animation: 6s ${fadeInAnimation} cubic-bezier(1, 0, 1, 0);
+  animation: 1s ${fadeInAnimation};
 `;
 
 export const PlayerWrapper = styled.div`
   animation: 1s ${bounceAnimation};
-  font-size: 1vw;
+  font-size: 2vw;
   font-weight: 700;
   text-transform: uppercase;
   color: #F3DE21;

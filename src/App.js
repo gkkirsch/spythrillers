@@ -8,12 +8,13 @@ import {
 import Player from './components/Player'
 import MainDisplay from './components/MainDisplay'
 import images from 'components/characters'
+import logo from 'images/spy-thrillers-small.jpg';
 
 function App() {
   useEffect(() => {
+    new Image().src = logo;
     Object.values(images).forEach((src) => {
-      const image = new Image()
-      image.src = src;
+      new Image().src = src
     });
   })
 

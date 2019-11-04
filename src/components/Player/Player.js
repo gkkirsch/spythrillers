@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useFirebase } from 'components/Firebase';
 import Join from './Join';
 import SelectCharacter from './SelectCharacter';
+import GetReady from './GetReady';
 
 const Wrapper = styled.div`
   background-color: #14171C;
@@ -82,7 +83,7 @@ function Player() {
     if (!player.avatar) return <SelectCharacter game={game} player={player} />
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
-        return <div>Waiting for John to start the game</div>;
+        return <GetReady game={game} player={player} />;
       default:
         return null;
     }

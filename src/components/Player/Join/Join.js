@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wrapper, Logo, Header, Input, Heading, Submit, Joining, Error } from './JoinStyles';
 import { useFirebase } from 'components/Firebase';
 import logo from 'images/spy-thrillers-small.jpg';
@@ -23,23 +23,24 @@ function Join({onJoin, onLeave}) {
   const [name, setName] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [error, setError] = useState("");
-  const [showJoin, setShowJoin] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
   const nameInput = React.createRef()
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+  })
+
   const updateGameCode = (code) => {
-    if (gameCode.length === 4) {
+    if (gameCode.length === 4 && code.length === 5) {
       nameInput.current.focus()
     }
-    setGameCode(code)
+    setGameCode(code.toLowerCase())
   }
 
   const updateName = (value) => {
-    if (name.length > 1 && gameCode.length > 4) {
-      setShowJoin(true)
-    } else {
-      setShowJoin(false)
-    }
     setName(value)
   }
 
@@ -62,6 +63,7 @@ function Join({onJoin, onLeave}) {
   }
 
   const handleSubmit = async () => {
+    if (name.length < 2 || gameCode.length !== 5) return setError("Name needs to be more than a single letter, \n and don't forget the secret code")
     setJoining(true)
     const [success, body, playerId] = await enterGame(gameCode)
     if (success) return onJoin(body, playerId)
@@ -70,6 +72,9 @@ function Join({onJoin, onLeave}) {
     setError(body)
     setJoining(false)
   }
+
+  if (loading) return <Wrapper />
+
   return (
     <Wrapper>
       <Header>
@@ -89,7 +94,7 @@ function Join({onJoin, onLeave}) {
       <Error>
         { error }
       </Error>
-      {showJoin && <Submit onClick={handleSubmit}>{(joining) ? <Joining>Joining</Joining> : "Play"}</Submit>}
+      <Submit onClick={handleSubmit}>{(joining) ? <Joining>Joining</Joining> : "Play"}</Submit>
     </Wrapper>
   )
 }

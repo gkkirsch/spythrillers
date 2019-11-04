@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useFirebase } from 'components/Firebase';
 import { Cancel, CountDown, FirstPlayerWrapper, Heading, Submit } from './GetReadyStyles';
 import blam from 'images/blam.png';
 
@@ -6,6 +7,7 @@ function FirstPlayer({game, player}) {
   let countDownStart = 3
   const [intervalId, setIntervalId] = useState(0)
   const [countDown, setCountDown] = useState(null)
+  const firebase = useFirebase();
 
   if (countDown === "starting") {
     clearInterval(intervalId)
@@ -13,14 +15,16 @@ function FirstPlayer({game, player}) {
 
   const handleSubmit = (e) => {
     setCountDown(countDownStart);
+    firebase.set(`games.${game.code}`, {countDown: countDownStart}, {merge: true})
     countDownStart = countDownStart - 1;
     const interval = setInterval(() => {
       if (countDownStart === 0) {
         return setCountDown("starting");
       }
+      firebase.set(`games.${game.code}`, {countDown: countDownStart}, {merge: true})
       setCountDown(countDownStart);
       countDownStart = countDownStart - 1;
-    }, 1000);
+    }, 2000);
     setIntervalId(interval)
   }
 
@@ -30,6 +34,7 @@ function FirstPlayer({game, player}) {
       return;
     }
     clearInterval(intervalId)
+    firebase.set(`games.${game.code}`, {countDown: null}, {merge: true})
     setCountDown("not ready")
     setTimeout(() => {
       setCountDown(null)

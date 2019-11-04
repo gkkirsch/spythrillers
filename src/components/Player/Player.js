@@ -6,6 +6,16 @@ import Join from './Join';
 import SelectCharacter from './SelectCharacter';
 import GetReady from './GetReady';
 
+const CountDown = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 304px;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
+`;
+
 const Wrapper = styled.div`
   background-color: #14171C;
   height: 100vh;
@@ -83,6 +93,7 @@ function Player() {
     if (!player.avatar) return <SelectCharacter game={game} player={player} />
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
+        if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
         return <GetReady game={game} player={player} />;
       default:
         return null;

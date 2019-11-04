@@ -60,6 +60,9 @@ export const Player = styled.img`
 `;
 
 export const AnimateCode = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   animation: 1s ${fadeInAnimation};
 `;
 

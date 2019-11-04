@@ -83,6 +83,8 @@ export const CountDown = styled.div`
   height: 350px;
   font-size: 304px;
   color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
 `;
 
 export const Cancel = styled.div`
@@ -96,7 +98,7 @@ export const Cancel = styled.div`
 
 export const Submit = styled.div`
   :active {
-    transform: scale(.7, .7);
+    transform: scale(.9, .9);
     transition: all .5s;
   }
   transition: all 1s ease-out;

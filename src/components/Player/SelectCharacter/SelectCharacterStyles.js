@@ -25,9 +25,16 @@ export const Heading = styled.div`
 `;
 
 export const Player = styled.img`
-  width: 30%;
+  width: 100%;
+  min-height:1px
   padding: 6px;
-  height: 100%;
+`;
+
+export const PlayerWrapper = styled.div`
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const Dim = styled.span`
@@ -40,6 +47,7 @@ export const Dim = styled.span`
 
 export const PlayerTaken = styled.img`
   width: 100%;
+  min-height:1px
   padding: 6px;
   filter: grayscale(100%);
 `;

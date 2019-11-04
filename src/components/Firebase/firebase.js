@@ -83,6 +83,17 @@ class Firebase {
     }
   }
 
+  getRef(path) {
+    try {
+      const pathArray = pathToArray(path)
+      const ref = deepRef(this.firestore, pathArray)
+      return ref;
+    }
+    catch(error) {
+      console.log('ERROR GET REF', error)
+    }
+  }
+
   async get(path) {
     try {
       const pathArray = pathToArray(path)

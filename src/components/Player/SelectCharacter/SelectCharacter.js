@@ -3,6 +3,7 @@ import {
   Heading,
   Wrapper,
   PlayersWrapper,
+  PlayerWrapper,
   Player,
   PlayerTaken,
   Dim
@@ -49,8 +50,8 @@ function SelectCharacter({game, player}) {
 
   const handleAvatarClick = (avatarName) => async () => {
     firebase.set(`games.${game.code}.selectedAvatars.${avatarName}`, {used: true}, {merge: true})
-    const playersExist = await firebase.exists(`games.${game.code}.players`)
-    if (!playersExist) {
+    const players = await firebase.collectionAsList(`games.${game.code}.players`)
+    if (players.length == 1) {
       firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: true}, {merge: true})
     } else {
       firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: false}, {merge: true})
@@ -61,7 +62,9 @@ function SelectCharacter({game, player}) {
     return availableAvatars().map((avatar) => {
       if (!avatar.used) {
         return (
-          <Player key={avatar.id} onClick={handleAvatarClick(avatar.id)} src={images[avatar.id]} />
+          <PlayerWrapper>
+            <Player key={avatar.id} onClick={handleAvatarClick(avatar.id)} src={images[avatar.id]} />
+          </PlayerWrapper>
         )
       }
       return (

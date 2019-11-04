@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useFirebase } from 'components/Firebase';
+import React, { useState } from 'react';
 import { Cancel, CountDown, FirstPlayerWrapper, Heading, Submit } from './GetReadyStyles';
 import blam from 'images/blam.png';
 
 function FirstPlayer({game, player}) {
-  const firebase = useFirebase();
   let countDownStart = 3
   const [intervalId, setIntervalId] = useState(0)
   const [countDown, setCountDown] = useState(null)
@@ -28,8 +26,8 @@ function FirstPlayer({game, player}) {
 
   const handleSubmitCancel = () => {
     if (countDown === "starting") {
-      return;
       clearInterval(intervalId)
+      return;
     }
     clearInterval(intervalId)
     setCountDown("not ready")
@@ -44,7 +42,7 @@ function FirstPlayer({game, player}) {
       <div>
         <Heading>You are in charge!</Heading>
         <Heading>Once everyone has joined,</Heading>
-        <Heading>press and hold <img style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
+        <Heading>press and hold <img alt="blam" style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
       </div>
       <CountDown>{countDown === "not ready" || countDown === "starting" ? <Cancel>{countDown}</Cancel>: countDown}</CountDown>
       <Submit
@@ -56,7 +54,7 @@ function FirstPlayer({game, player}) {
         onTouchEnd={handleSubmitCancel}
         onPointerUp={handleSubmitCancel}
       >
-        <img width="120px" src={blam} />
+        <img alt="blam" width="120px" src={blam} />
       </Submit>
     </FirstPlayerWrapper>
   )

@@ -3,6 +3,19 @@ import { fadeIn } from 'react-animations';
 
 const zoomAnimation = keyframes`${fadeIn}`;
 
+export const Player = styled.img`
+  width: 100%;
+  min-height:1px
+`;
+
+export const PlayerWrapper = styled.div`
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const FirstPlayerWrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -12,15 +25,53 @@ export const FirstPlayerWrapper = styled.div`
   justify-content: space-evenly
 `;
 
+export const WaitingWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+  justify-content: center;
+`;
+
+export const AdWarning = styled.div`
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 1s ease-out;
+  animation: 1s ${zoomAnimation};
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  font-size: 8px;
+  padding-top: 24px;
+  color: #eaeeed;
+`;
+
+export const StandOut = styled.span`
+  color: #dc2613;
+`
+
+export const AdSpace = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const Heading = styled.div`
   text-align: center;
   display: flex;
   justify-content: center;
+  align-items: center;
   transition: all 1s ease-out;
   animation: 1s ${zoomAnimation};
   font-size: 24px;
   font-weight: 700;
-  padding: 4px;
+  // padding: 2px;
   color: #F3DE21;
   text-transform: uppercase;
 `;

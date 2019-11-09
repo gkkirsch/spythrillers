@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wrapper, Logo, Header, GameCode, SubText, Player, PlayersWrapper, PlayerWrapper, AnimateCode } from './MainDisplayStyles';
+import { CountDown, Wrapper, Logo, Header, GameCode, SubText, Player, PlayersWrapper, PlayerWrapper, AnimateCode } from './MainDisplayStyles';
 import { useFirebase } from 'components/Firebase';
 import logo from 'images/spy-thrillers.jpg';
 import images from 'components/characters'
@@ -23,8 +23,16 @@ const playCharacterSound = (snapshot) => {
 
 function Intro({gameCode}) {
   const firebase = useFirebase();
+  const [countDown, setCountDown] = useState(null);
   const [players, setPlayers] = useState([]);
   let order = 1
+
+  const updateGame = (snapshot) => {
+    if (snapshot.exists) {
+      const {countDown} = snapshot.data()
+      setCountDown(countDown)
+    }
+  }
 
   const updatePlayers = (snapshot) => {
     const currentPlayers = snapshot.docs.reduce((acc, player) => {
@@ -55,6 +63,7 @@ function Intro({gameCode}) {
     }, 1000)
 
     const setup = async () => {
+      firebase.listen(`games.${gameCode}`, updateGame)
       firebase.listen(`games.${gameCode}.players`, updatePlayers)
       firebase.listen(`games.${gameCode}.selectedAvatars`, playCharacterSound)
     }
@@ -73,19 +82,31 @@ function Intro({gameCode}) {
     })
   }
 
-  return (
-    <Wrapper>
+  const renderStartHeader = () => {
+    if (countDown) return (
+      <Header>
+        <CountDown>{countDown}</CountDown>
+      </Header>
+    )
+
+    return (
       <Header>
         <Logo src={logo} />
+        <AnimateCode>
+          <SubText>
+            enter the secret code
+          </SubText>
+          <GameCode>
+            {gameCode}
+          </GameCode>
+        </AnimateCode>
       </Header>
-      <AnimateCode>
-        <SubText>
-          enter secret code
-        </SubText>
-        <GameCode>
-          {gameCode}
-        </GameCode>
-      </AnimateCode>
+    )
+  }
+
+  return (
+    <Wrapper>
+        {renderStartHeader()}
       <PlayersWrapper>
         {renderPlayers()}
       </PlayersWrapper>

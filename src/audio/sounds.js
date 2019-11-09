@@ -10,8 +10,12 @@ import somethingsHappening from 'audio/somethings-happening.mp3';
 import gdayMate from 'audio/gday-mate.mp3';
 import panic from 'audio/panic.mp3';
 import manCough from 'audio/man-couph.mp3';
+import tick from 'audio/tick.mp3';
+import tock from 'audio/tock.mp3';
 
 export default {
+  tick: new UIfx(tick, { volume: 1, throttleMs: 100 }),
+  tock: new UIfx(tock, { volume: 1, throttleMs: 100 }),
   intro: new UIfx(soundtrack, { volume: 1, throttleMs: 100 }),
   ladyRed: new UIfx(womanLaugh, { volume: 1, throttleMs: 100 }),
   asia: new UIfx(laughShort, { volume: 1, throttleMs: 100 }),

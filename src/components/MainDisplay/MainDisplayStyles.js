@@ -6,6 +6,16 @@ const pulseAnimation = keyframes`${pulse}`;
 const zoomAnimation = keyframes`${zoomIn}`;
 const fadeInAnimation = keyframes`${fadeIn}`;
 
+export const CountDown = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 304px;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
+`;
+
 export const Wrapper = styled.div`
   transition: all 1s ease-out;
   overflow: hidden;
@@ -15,6 +25,7 @@ export const Wrapper = styled.div`
   justify-content: center;
   background-color: #14171C;
   height: 100vh;
+  width: 100%;
 `;
 
 export const Header = styled.div`
@@ -49,10 +60,12 @@ export const SubText = styled.div`
 `;
 
 export const PlayersWrapper = styled.div`
+  min-height: 240px;
   width: 75%;
   padding-top: 16px;
   display: flex;
   justify-content: flex-start;
+  transition: all 1s;
 `;
 
 export const Player = styled.img`

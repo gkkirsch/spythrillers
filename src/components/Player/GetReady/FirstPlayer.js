@@ -9,7 +9,7 @@ function FirstPlayer({game, player}) {
   const [countDown, setCountDown] = useState(null)
   const firebase = useFirebase();
 
-  if (countDown === "starting") {
+  if (countDown === 0) {
     clearInterval(intervalId)
   }
 
@@ -19,7 +19,7 @@ function FirstPlayer({game, player}) {
     countDownStart = countDownStart - 1;
     const interval = setInterval(() => {
       if (countDownStart === 0) {
-        return setCountDown("starting");
+        firebase.set(`games.${game.code}`, {gamePhase: "TIMER"}, {merge: true})
       }
       firebase.set(`games.${game.code}`, {countDown: countDownStart}, {merge: true})
       setCountDown(countDownStart);
@@ -29,7 +29,7 @@ function FirstPlayer({game, player}) {
   }
 
   const handleSubmitCancel = () => {
-    if (countDown === "starting") {
+    if (countDown === 0) {
       clearInterval(intervalId)
       return;
     }
@@ -49,7 +49,7 @@ function FirstPlayer({game, player}) {
         <Heading>Once everyone has joined,</Heading>
         <Heading>press and hold <img alt="blam" style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
       </div>
-      <CountDown>{countDown === "not ready" || countDown === "starting" ? <Cancel>{countDown}</Cancel>: countDown}</CountDown>
+      <CountDown>{countDown === "not ready" ? <Cancel>{countDown}</Cancel>: countDown}</CountDown>
       <Submit
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={handleSubmit}

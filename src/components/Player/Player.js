@@ -5,6 +5,8 @@ import { useFirebase } from 'components/Firebase';
 import Join from './Join';
 import SelectCharacter from './SelectCharacter';
 import GetReady from './GetReady';
+import Spy from './Spy/Spy';
+import Detective from './Detective/Detective';
 
 const CountDown = styled.div`
   display: flex;
@@ -93,6 +95,12 @@ function Player() {
     if (!player.avatar) return <SelectCharacter game={game} player={player} />
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
+        if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
+        return <GetReady game={game} player={player} />;
+      case "TIMER":
+        if (player.spy) return <Spy game={game} />
+        return <Detective location={game.location} />
+      case "GG":
         if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
         return <GetReady game={game} player={player} />;
       default:

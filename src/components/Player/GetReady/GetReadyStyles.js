@@ -77,6 +77,7 @@ export const Heading = styled.div`
 `;
 
 export const CountDown = styled.div`
+  user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;

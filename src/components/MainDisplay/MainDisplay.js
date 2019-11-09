@@ -3,8 +3,8 @@ import Cookies from 'js-cookie';
 import { useFirebase } from 'components/Firebase';
 import { Wrapper } from './MainDisplayStyles';
 import images from 'components/characters'
-import sounds from 'audio/sounds';
 import Intro from './Intro';
+import Timer from './Timer';
 
 const GAME = Cookies.get('game');
 
@@ -16,6 +16,10 @@ function MainDisplay() {
 
   const updateGame = (snapshot) => {
     setGame({...snapshot.data()})
+    const {countDown} = snapshot.data()
+    if (countDown == 1) {
+      // firebase.set(`games.${gameCode}.`)
+    }
   }
 
   useEffect(() => {
@@ -29,12 +33,16 @@ function MainDisplay() {
         const gameCodeRef = result.docs[0]
         const { code } = gameCodeRef.data()
         setGameCode(code)
-        await firebase.set(`games.${code}`, { locationSetId: 1, gamePhase: "GATHER_FRIENDS", code })
+        await firebase.set(`games.${code}`, { locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
         firebase.listen(`games.${code}`, updateGame)
         gameCodeRef.ref.delete()
         Cookies.set('game', code, { expires: 1 });
       } else {
         setGameCode(GAME)
+        const players = await firebase.collectionAsList(`games.${GAME}.players`)
+        players.forEach((player) => {
+          firebase.set(`games.${GAME}.players.${player.id}`, { spy: false }, { merge: true })
+        })
         firebase.listen(`games.${GAME}`, updateGame)
       }
     }
@@ -46,6 +54,10 @@ function MainDisplay() {
     if (loading) return <Wrapper />
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
+        return <Intro gameCode={gameCode} />
+      case "TIMER":
+        return <Timer game={game} />
+      case "GG":
         return <Intro gameCode={gameCode} />
       default:
         return null

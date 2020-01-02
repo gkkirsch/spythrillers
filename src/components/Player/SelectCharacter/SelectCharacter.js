@@ -51,7 +51,7 @@ function SelectCharacter({game, player}) {
   const handleAvatarClick = (avatarName) => async () => {
     firebase.set(`games.${game.code}.selectedAvatars.${avatarName}`, {used: true}, {merge: true})
     const players = await firebase.collectionAsList(`games.${game.code}.players`)
-    if (players.length == 1) {
+    if (players.length <= 1) {
       firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: true}, {merge: true})
     } else {
       firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: false}, {merge: true})

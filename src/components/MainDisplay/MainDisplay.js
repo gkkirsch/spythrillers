@@ -33,7 +33,7 @@ function MainDisplay() {
         const gameCodeRef = result.docs[0]
         const { code } = gameCodeRef.data()
         setGameCode(code)
-        await firebase.set(`games.${code}`, { locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
+        await firebase.set(`games.${code}`, { seconds: 60 * 2, locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
         firebase.listen(`games.${code}`, updateGame)
         gameCodeRef.ref.delete()
         Cookies.set('game', code, { expires: 1 });

@@ -4,20 +4,6 @@ import { useFirebase } from 'components/Firebase';
 import logo from 'images/spy-thrillers-small.jpg';
 import CodeInput from './CodeInput';
 
-// function toggleFullScreen() {
-//   try {
-//     var doc = window.document;
-//     var docEl = doc.documentElement;
-//
-//     var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-//
-//     if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-//       requestFullScreen.call(docEl);
-//     }
-//   } catch {
-//   }
-// }
-
 function Join({onJoin, onLeave}) {
   const firebase = useFirebase();
   const [name, setName] = useState("");

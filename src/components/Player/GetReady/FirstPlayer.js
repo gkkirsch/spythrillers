@@ -49,7 +49,7 @@ function FirstPlayer({game, player}) {
         <Heading>Once everyone has joined,</Heading>
         <Heading>press and hold <img alt="blam" style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
       </div>
-      <CountDown>{countDown === "not ready" ? <Cancel>{countDown}</Cancel>: countDown}</CountDown>
+      <CountDown>{countDown === "not ready" ? <Cancel>{countDown}</Cancel>: ''}</CountDown>
       <Submit
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={handleSubmit}

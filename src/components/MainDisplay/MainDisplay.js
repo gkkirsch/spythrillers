@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import { useFirebase } from 'components/Firebase';
 import { Wrapper } from './MainDisplayStyles';
-import images from 'components/characters'
 import Intro from './Intro';
 import Timer from './Timer';
 
@@ -17,7 +16,7 @@ function MainDisplay() {
   const updateGame = (snapshot) => {
     setGame({...snapshot.data()})
     const {countDown} = snapshot.data()
-    if (countDown == 1) {
+    if (countDown === 1) {
       // firebase.set(`games.${gameCode}.`)
     }
   }

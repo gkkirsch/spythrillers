@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useFirebase } from 'components/Firebase';
 
 const Wrapper = styled.div`
   overflow: hidden;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFirebase } from 'components/Firebase';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import useCountdown from 'react-use-countdown';
 import sounds from 'audio/sounds';
 
@@ -25,7 +25,7 @@ function Timer({game}) {
   const firebase = useFirebase();
   const mili = useCountdown(() => Date.now() + (seconds * 1000));
   const secondsLeft = mili / 1000;
-  const [timer, setTimer] = useState(180)
+  // const [timer, setTimer] = useState(180)
   const [spy, setSpy] = useState({})
 
   useEffect(() => {
@@ -42,12 +42,12 @@ function Timer({game}) {
   }, [])
 
   if (secondsLeft <= 60) {
-    if (secondsLeft % 2 == 0) {
+    if (secondsLeft % 2 === 0) {
       sounds["tick"].play()
     }
   }
   if (secondsLeft <= 30) {
-    if (secondsLeft % 2 == 0) {
+    if (secondsLeft % 2 === 0) {
       sounds["tick"].play()
     } else {
       sounds["tock"].play()

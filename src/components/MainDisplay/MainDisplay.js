@@ -24,7 +24,7 @@ function MainDisplay() {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false)
-    }, 1000)
+    }, 1001)
 
     const setup = async () => {
       if (!GAME) {

@@ -49,7 +49,9 @@ function Join({onJoin, onLeave}) {
   }
 
   const handleSubmit = async () => {
-    if (name.length < 2 || gameCode.length !== 5) return setError("Name needs to be more than a single letter, \n and don't forget the secret code")
+    if (gameCode.length !== 5) return setError("You can't just not enter a secret code...")
+    if (name.length < 2) return setError("Your name has to be more than a single letter. C'mon GEEZ.")
+    if (name.length > 10) return setError("Your name is a little lengthy, don't be offended just shorten it.")
     setJoining(true)
     const [success, body, playerId] = await enterGame(gameCode)
     if (success) return onJoin(body, playerId)

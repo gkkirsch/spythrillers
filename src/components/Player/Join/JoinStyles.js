@@ -11,7 +11,7 @@ export const Joining = styled.div`
 export const Error = styled.div`
   text-align: center;
   color: #e22816;
-  padding-top: 16px;
+  padding: 16px;
   font-size: 15px;
   font-weight: 800;
 `;

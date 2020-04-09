@@ -1,7 +1,7 @@
 # Spy Thrillers
 In order to run the project you will need to:
 1. Create a `.env` file in the root of the project and paste any env vars
-2. Make sure you are logged into and part of the spy thrillers firebase project
+2. Make sure you are logged into and part of the spy thrillers firebase project (https://firebase.google.com/docs/cli#install-cli-mac-linux)
 
 ### `npm install`
 ### `npm start`

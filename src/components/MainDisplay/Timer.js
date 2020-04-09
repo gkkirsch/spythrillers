@@ -21,7 +21,8 @@ const getRandom = (arr) => {
 }
 
 function Timer({game}) {
-  const seconds = game.seconds;
+  console.log('GAME', game)
+  const seconds = game.timer != 0 ? game.timer : game.seconds;
   const firebase = useFirebase();
   const mili = useCountdown(() => Date.now() + (seconds * 1000));
   const secondsLeft = mili / 1000;

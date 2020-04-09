@@ -118,6 +118,12 @@ class Firebase {
     }
   }
 
+  addToList(path, data, options = {}) {
+    const pathArray = pathToArray(path)
+    const docRef = deepRef(this.firestore, pathArray)
+    return docRef.add(data)
+  }
+
   add(collection, data, options = {}) {
     return this.firestore.collection(collection).add(data)
   }

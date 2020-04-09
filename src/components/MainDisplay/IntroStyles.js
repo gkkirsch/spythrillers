@@ -51,6 +51,7 @@ export const SubText = styled.div`
 export const PlayersWrapper = styled.div`
   width: 75%;
   padding-top: 16px;
+  padding-bottom: 16px;
   display: flex;
   justify-content: flex-start;
 `;

@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Player from './components/Player'
 import MainDisplay from './components/MainDisplay'
+import Settings from './components/Settings'
 import images from 'components/characters'
 import logo from 'images/spy-thrillers-small.jpg';
 
@@ -22,6 +23,9 @@ function App() {
       <Switch>
         <Route path="/tv">
           <MainDisplay />
+        </Route>
+        <Route path="/settings">
+          <Settings />
         </Route>
         <Route path="/">
           <Player />

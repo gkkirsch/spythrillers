@@ -6,6 +6,7 @@ import Join from './Join';
 import SelectCharacter from './SelectCharacter';
 import GetReady from './GetReady';
 import Spy from './Spy/Spy';
+import Accuse from './Accuse/Accuse';
 import Detective from './Detective/Detective';
 
 const CountDown = styled.div`
@@ -98,8 +99,10 @@ function Player() {
         if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
         return <GetReady game={game} player={player} />;
       case "TIMER":
-        if (player.spy) return <Spy game={game} />
-        return <Detective location={game.location} />
+        if (player.spy) return <Spy game={game} player={player} />
+        return <Detective game={game} player={player} />
+      case "ACCUSE":
+        return <Accuse game={game} player={player} />;
       case "GG":
         if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
         return <GetReady game={game} player={player} />;

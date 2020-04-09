@@ -3,7 +3,10 @@ import Cookies from 'js-cookie';
 import { useFirebase } from 'components/Firebase';
 import { Wrapper } from './MainDisplayStyles';
 import Intro from './Intro';
+import End from './End';
+import Accuse from './Accuse';
 import Timer from './Timer';
+import sounds from 'audio/sounds';
 
 const GAME = Cookies.get('game');
 
@@ -26,13 +29,26 @@ function MainDisplay() {
       setLoading(false)
     }, 1000)
 
+    setTimeout(() => {
+      const audio = sounds.intro.play()
+      document.body.onkeyup = (e) => {
+        if(e.keyCode === 32){
+          if (audio.player.paused) {
+            audio.player.play()
+          } else {
+            audio.player.pause()
+          }
+        }
+      }
+    }, 1000)
+
     const setup = async () => {
       if (!GAME) {
         const result = await firebase.firestore.collection('game-codes').limit(1).get()
         const gameCodeRef = result.docs[0]
         const { code } = gameCodeRef.data()
         setGameCode(code)
-        await firebase.set(`games.${code}`, { seconds: 60 * 2, locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
+        await firebase.set(`games.${code}`, { seconds: 60 * 2, timer: 0, locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
         firebase.listen(`games.${code}`, updateGame)
         gameCodeRef.ref.delete()
         Cookies.set('game', code, { expires: 1 });
@@ -56,8 +72,10 @@ function MainDisplay() {
         return <Intro gameCode={gameCode} />
       case "TIMER":
         return <Timer game={game} />
+      case "ACCUSE":
+        return <Accuse game={game} />
       case "GG":
-        return <Intro gameCode={gameCode} />
+        return <End gameCode={gameCode} />
       default:
         return null
 

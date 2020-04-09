@@ -31,7 +31,7 @@ export const Wrapper = styled.div`
 export const Header = styled.div`
   transition: all 1s ease-out;
   position: relative;
-  width: 45%;
+  width: 35%;
 `;
 
 export const Logo = styled.img`
@@ -61,15 +61,17 @@ export const SubText = styled.div`
 
 export const PlayersWrapper = styled.div`
   min-height: 240px;
-  width: 75%;
+  width: 95%;
   padding-top: 16px;
+  padding-bottom: 16px;
+  flex-wrap: wrap;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   transition: all 1s;
 `;
 
 export const Player = styled.img`
-  width: 65%;
+  width: 55%;
 `;
 
 export const AnimateCode = styled.div`
@@ -81,8 +83,10 @@ export const AnimateCode = styled.div`
 
 export const PlayerWrapper = styled.div`
   animation: 1s ${bounceAnimation};
-  font-size: 2vw;
+  font-size: 1.5vw;
+  width: 16%;
   font-weight: 700;
+  margin-top: 32px;
   text-transform: uppercase;
   color: #F3DE21;
   display: flex;

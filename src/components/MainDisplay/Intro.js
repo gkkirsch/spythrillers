@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { CountDown, Wrapper, Logo, Header, GameCode, SubText, Player, PlayersWrapper, PlayerWrapper, AnimateCode } from './MainDisplayStyles';
 import { useFirebase } from 'components/Firebase';
+import styled, { keyframes } from 'styled-components';
+import { merge, tada, fadeInUp, pulse, zoomIn, fadeIn } from 'react-animations';
 import logo from 'images/spy-thrillers.jpg';
 import images from 'components/characters'
 import sounds from 'audio/sounds';
 
 let mutePlayers = true
 
-setTimeout(() => {
-  mutePlayers = false
-}, 5000)
-
 const playCharacterSound = (snapshot) => {
-  if (mutePlayers) return;
   snapshot.docChanges().forEach((change) => {
     if (change.type === "added") {
       const avatar = change.doc.id
+      if (mutePlayers) return;
       if (avatar) return sounds[avatar].play()
     }
   })
@@ -43,24 +42,21 @@ function Intro({gameCode}) {
       return acc;
     }, [])
     setPlayers([...players, ...currentPlayers])
-  }
+}
 
   useEffect(() => {
+    setTimeout(() => {
+      mutePlayers = false
+    }, 5000)
+    return () => {
+      mutePlayers = true
+    }
+  }, [])
+
+  useEffect(() => {
+
     const image = new Image()
     image.src = logo;
-
-    setTimeout(() => {
-      const audio = sounds.intro.play()
-      document.body.onkeyup = (e) => {
-        if(e.keyCode === 32){
-          if (audio.player.paused) {
-            audio.player.play()
-          } else {
-            audio.player.pause()
-          }
-        }
-      }
-    }, 1000)
 
     const setup = async () => {
       firebase.listen(`games.${gameCode}`, updateGame)
@@ -106,6 +102,9 @@ function Intro({gameCode}) {
 
   return (
     <Wrapper>
+      <SetCountDown to="/settings">
+        Settings
+      </SetCountDown>
         {renderStartHeader()}
       <PlayersWrapper>
         {renderPlayers()}
@@ -115,3 +114,19 @@ function Intro({gameCode}) {
 }
 
 export default Intro;
+
+const SetCountDown = styled(Link)`
+  text-decoration: none;
+  padding: 8px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
+  &:hover {
+   color: #F3DE21
+  }
+`;

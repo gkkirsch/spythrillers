@@ -16,15 +16,15 @@ import tock from 'audio/tock.mp3';
 export default {
   tick: new UIfx(tick, { volume: 1, throttleMs: 100 }),
   tock: new UIfx(tock, { volume: 1, throttleMs: 100 }),
-  intro: new UIfx(soundtrack, { volume: 1, throttleMs: 100 }),
-  ladyRed: new UIfx(womanLaugh, { volume: 1, throttleMs: 100 }),
-  asia: new UIfx(laughShort, { volume: 1, throttleMs: 100 }),
-  midge: new UIfx(bahumbug, { volume: 1, throttleMs: 100 }),
-  officerDope: new UIfx(letMeAtHim, { volume: 1, throttleMs: 100 }),
-  dahlia: new UIfx(shhhh, { volume: 1, throttleMs: 100 }),
-  dudeManGuy: new UIfx(butter, { volume: 1, throttleMs: 100 }),
-  jawbone: new UIfx(somethingsHappening, { volume: 1, throttleMs: 100 }),
-  mike: new UIfx(gdayMate, { volume: 1, throttleMs: 100 }),
-  roger: new UIfx(manCough, { volume: 1, throttleMs: 100 }),
-  tom: new UIfx(panic, { volume: 1, throttleMs: 100 })
+  intro: new UIfx(soundtrack, { volume: 1, throttleMs: 60000 }),
+  ladyRed: new UIfx(womanLaugh, { volume: 1, throttleMs: 600000 }),
+  asia: new UIfx(laughShort, { volume: 1, throttleMs: 600000 }),
+  midge: new UIfx(bahumbug, { volume: 1, throttleMs: 600000 }),
+  officerDope: new UIfx(letMeAtHim, { volume: 1, throttleMs: 600000 }),
+  dahlia: new UIfx(shhhh, { volume: 1, throttleMs: 600000 }),
+  dudeManGuy: new UIfx(butter, { volume: 1, throttleMs: 600000 }),
+  jawbone: new UIfx(somethingsHappening, { volume: 1, throttleMs: 600000 }),
+  mike: new UIfx(gdayMate, { volume: 1, throttleMs: 600000 }),
+  roger: new UIfx(manCough, { volume: 1, throttleMs: 600000 }),
+  tom: new UIfx(panic, { volume: 1, throttleMs: 600000 })
 };

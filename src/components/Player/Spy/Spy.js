@@ -1,68 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import Cookies from 'js-cookie';
+import styled, { keyframes } from 'styled-components';
 import { useFirebase } from 'components/Firebase';
+import images from 'components/characters'
+import { slideInLeft } from 'react-animations';
+const slideLeft = keyframes`${slideInLeft}`;
 
-const Wrapper = styled.div`
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const PLAYER_ID = Cookies.get('playerId');
 
-const Title = styled.div`
-  font-size: 30vh;
-  color: #e02712;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #e02712;
-  font-weight: 700;
-  text-transform: uppercase;
-`;
-
-const Location = styled.div`
-  font-size: 3vh;
-  font-weight: 700;
-  color: #F3DE21;
-  padding: 3px 0;
-  text-transform: lowercase;
-  text-align: center;
-	flex: 1 0 40%;
-  box-sizing: border-box;
-  transition: all 1s ease-out;
-  margin: 8px;
-  background-color: black;
-  align-self: auto;
-  padding: 3px 3px;
-`;
-
-const Locations = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-  justify-content: center;
-`;
-
-function Spy({game}) {
+function Spy({game, player}) {
   const firebase = useFirebase();
   const [locations, setLocations] = useState([])
-  const [showSpy, setShowSpy] = useState(true)
+  const [players, setPlayers] = useState([]);
   const [showLocations, setShowLocations] = useState(false)
 
   useEffect(() => {
     const setup = async () => {
       const { locations } = await firebase.get(`locations.${game.locationSet}`)
+      const players = await firebase.collectionAsList(`games.${game.code}.players`)
       setLocations(locations)
+      setPlayers(players)
     }
-    setTimeout(() => {
-      setShowSpy(false)
-    }, 5000)
-    setTimeout(() => {
-      setShowLocations(true)
-    }, 5500)
     setup()
   }, [])
+
+  const handleAccuseClick = (player) => () => {
+    firebase.set(`games.${game.code}`, { gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
+    firebase.set(`games.${game.code}.players.${PLAYER_ID}`, { accusedSomeone: true }, {merge: true})
+  }
+
 
   const renderLocations = () => {
     return locations.map((location) => {
@@ -72,21 +38,224 @@ function Spy({game}) {
     })
   }
 
-  if (showLocations) {
+  if (!showLocations) {
     return (
+    <Wrapper>
+      <ViewAccuse onClick={() => setShowLocations(true)}>
+        <V>V</V>
+        <V>I</V>
+        <V>E</V>
+        <V>W</V>
+        <S></S>
+        <V>A</V>
+        <V>C</V>
+        <V>C</V>
+        <V>U</V>
+        <V>S</V>
+        <V>E</V>
+      </ViewAccuse>
+      <Title>You are the SPY</Title>
+      <EndGame>END GAME</EndGame>
+      <SubTitle>Locations</SubTitle>
       <Locations>
         {renderLocations()}
       </Locations>
+    </Wrapper>
     )
+  }
+
+  const renderPlayers = () => {
+    const sortedPlayers = players.sort((a, b) =>  a.order - b.order);
+    const filteredPlayers = sortedPlayers.filter((yo) => {
+      return yo.id != player.id
+    })
+    return filteredPlayers.map((player) => {
+      return (
+        <PlayerWrapper key={player.id} onClick={handleAccuseClick(player)}>
+          {player.name}
+          <Player src={images[player.avatar]} />
+        </PlayerWrapper>
+      )
+    })
   }
 
   return (
     <Wrapper>
-      {showSpy && (
-        <Title>SPY</Title>
-      )}
+      <ViewLocations onClick={() => setShowLocations(false)}>
+        <V>V</V>
+        <V>I</V>
+        <V>E</V>
+        <V>W</V>
+        <S></S>
+        <V>L</V>
+        <V>O</V>
+        <V>C</V>
+        <V>A</V>
+        <V>T</V>
+        <V>I</V>
+        <V>O</V>
+        <V>N</V>
+        <V>S</V>
+      </ViewLocations>
+      <Title>You are the SPY</Title>
+      <EndGame>END GAME</EndGame>
+        {player.accusedSomeone &&
+          <SubTitle>You have already accused someone.</SubTitle>
+        }
+        {!player.accusedSomeone &&
+        <>
+          <SubTitle>Tap Player to Accuse</SubTitle>
+          <PlayersWrapper>
+            {renderPlayers()}
+          </PlayersWrapper>
+        </>
+        }
     </Wrapper>
   )
 }
 
 export default Spy;
+
+const EndGame = styled.div`
+  user-select: none;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 32px;
+  margin-bottom: 32px;
+  background-color: #F3DE21;
+  padding: 8px;
+  font-size: 2em;
+  font-size: 2em;
+  color: #e02712;
+  &:active {
+    color: #F3DE21;
+    background-color: #e02712;
+  }
+  &:hover {
+    color: #F3DE21;
+    background-color: #e02712;
+  }
+`;
+
+const S = styled.div`
+  margin-top: 8px;
+  margin-bottom: 8px;
+`;
+
+const V = styled.div`
+  cursor: pointer;
+  text-transform: uppercase;
+`;
+
+const ViewAccuse = styled.div`
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  margin-top: -100px;
+  left: 10px;
+  font-size: 1em;
+  color: gray;
+`
+
+const ViewLocations = styled.div`
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  margin-top: -100px;
+  left: 10px;
+  font-size: 1em;
+  color: gray;
+`
+
+const SubTitle = styled.div`
+  user-select: none;
+  font-size: 1em;
+  margin: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #F3DE21;
+`
+
+const PlayersWrapper = styled.div`
+  animation: .3s ${slideLeft};
+  padding-top: 16px;
+  padding-bottom: 16px;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+
+const Player = styled.img`
+  width: 65%;
+`;
+
+const PlayerWrapper = styled.div`
+  transform : translate3d(0, 0, 0);
+  font-size: 2em;
+  margin: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #F3DE21;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+const Title = styled.div`
+  user-select: none;
+  margin-top: 16px;
+  font-size: 2em;
+  color: #e02712;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
+`;
+
+const Location = styled.div`
+  user-select: none;
+  font-size: 2em;
+  font-weight: 700;
+  color: #F3DE21;
+  text-transform: lowercase;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 1s ease-out;
+  margin: 8px;
+  background-color: black;
+  align-self: auto;
+  padding: 6px 6px;
+`;
+
+const Locations = styled.div`
+  animation: .3s ${slideLeft};
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 32px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+

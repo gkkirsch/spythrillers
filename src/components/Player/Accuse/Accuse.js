@@ -36,7 +36,7 @@ function Accuse({game, player}) {
   }
 
   if  (player.id == accusedPlayer.id) {
-    return <CenterSpy>YOUR BEING ACCUSED</CenterSpy>
+    return <CenterSpy>YOU'RE BEING ACCUSED</CenterSpy>
   }
 
   if (vote === "YAY") {

@@ -24,7 +24,7 @@ function FirstPlayer({game, player}) {
       firebase.set(`games.${game.code}`, {countDown: countDownStart}, {merge: true})
       setCountDown(countDownStart);
       countDownStart = countDownStart - 1;
-    }, 2000);
+    }, 1000);
     setIntervalId(interval)
   }
 
@@ -41,15 +41,20 @@ function FirstPlayer({game, player}) {
     }, 500)
   }
 
+  const renderCountdown = () => {
+    if (countDown !== "not ready") return <CountDown>{countDown}</CountDown>
+    if (countDown === "not ready") return <CountDown><Cancel>not ready</Cancel></CountDown>
+    return <CountDown></CountDown>
+  }
+
   return (
     <FirstPlayerWrapper>
-
       <div>
         <Heading>You are in charge!</Heading>
         <Heading>Once everyone has joined,</Heading>
         <Heading>press and hold <img alt="blam" style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
       </div>
-      <CountDown>{countDown === "not ready" ? <Cancel>{countDown}</Cancel>: ''}</CountDown>
+        {renderCountdown()}
       <Submit
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={handleSubmit}

@@ -20,7 +20,7 @@ const playCharacterSound = (snapshot) => {
   })
 }
 
-function Intro({gameCode}) {
+function Intro({game, gameCode}) {
   const firebase = useFirebase();
   const [countDown, setCountDown] = useState(null);
   const [players, setPlayers] = useState([]);
@@ -45,6 +45,14 @@ function Intro({gameCode}) {
 }
 
   useEffect(() => {
+    console.log('YOYO', game)
+players.forEach((player) => {
+      console.log('PLAYER', player)
+      firebase.set(`games.${gameCode}.players.${player.id}`, { spy: false, accusedSomeone: false }, { merge: true })
+    })
+}, [players])
+
+  useEffect(() => {
     setTimeout(() => {
       mutePlayers = false
     }, 5000)
@@ -52,6 +60,10 @@ function Intro({gameCode}) {
       mutePlayers = true
     }
   }, [])
+
+  useEffect(() => {
+    firebase.set(`games.${gameCode}`, { timer: game.seconds * 1000}, {merge: true})
+  }, [game.seconds])
 
   useEffect(() => {
 

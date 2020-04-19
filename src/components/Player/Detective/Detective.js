@@ -25,7 +25,7 @@ function Detective({game, player}) {
   }, [])
 
   const handleAccuseClick = (player) => () => {
-    firebase.set(`games.${game.code}`, { gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
+    firebase.set(`games.${game.code}`, { accused: true, gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
     firebase.set(`games.${game.code}.players.${PLAYER_ID}`, { accusedSomeone: true }, {merge: true})
   }
 

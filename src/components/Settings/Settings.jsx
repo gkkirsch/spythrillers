@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import styled from 'styled-components';
 import sounds from 'audio/sounds';
 
-const GAME = Cookies.get('game');
-
 function toTime(millis) {
   var minutes = Math.floor(millis / 60000);
   var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -14,6 +12,7 @@ function toTime(millis) {
 }
 
 function Settings() {
+  const GAME = Cookies.get('gameCode');
   const firebase = useFirebase();
   const [seconds, setSeconds] = useState(null)
 

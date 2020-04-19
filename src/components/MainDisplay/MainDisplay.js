@@ -8,8 +8,6 @@ import Accuse from './Accuse';
 import Timer from './Timer';
 import sounds from 'audio/sounds';
 
-const GAME = Cookies.get('game');
-
 function MainDisplay() {
   const firebase = useFirebase();
   const [game, setGame] = useState({})
@@ -43,6 +41,7 @@ function MainDisplay() {
     }, 1000)
 
     const setup = async () => {
+      const GAME = Cookies.get('gameCode');
       if (!GAME) {
         const result = await firebase.firestore.collection('game-codes').limit(1).get()
         const gameCodeRef = result.docs[0]
@@ -51,12 +50,12 @@ function MainDisplay() {
         await firebase.set(`games.${code}`, { seconds: 60 * 2, timer: 0, locationSet: "default", gamePhase: "GATHER_FRIENDS", code })
         firebase.listen(`games.${code}`, updateGame)
         gameCodeRef.ref.delete()
-        Cookies.set('game', code, { expires: 1 });
+        Cookies.set('gameCode', code, { expires: 1 });
       } else {
         setGameCode(GAME)
         const players = await firebase.collectionAsList(`games.${GAME}.players`)
         players.forEach((player) => {
-          firebase.set(`games.${GAME}.players.${player.id}`, { spy: false }, { merge: true })
+          firebase.set(`games.${GAME}.players.${player.id}`, { spy: false, accusedSomeone: false }, { merge: true })
         })
         firebase.listen(`games.${GAME}`, updateGame)
       }
@@ -69,13 +68,13 @@ function MainDisplay() {
     if (loading) return <Wrapper />
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
-        return <Intro gameCode={gameCode} />
+        return <Intro game={game} gameCode={gameCode} />
       case "TIMER":
         return <Timer game={game} />
       case "ACCUSE":
         return <Accuse game={game} />
       case "GG":
-        return <End gameCode={gameCode} />
+        return <Intro game={game} gameCode={gameCode} />
       default:
         return null
 

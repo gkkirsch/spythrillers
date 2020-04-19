@@ -43,7 +43,7 @@ function Accuse({game}) {
       firebase.listen(`games.${game.code}.yay`, updateYay)
       firebase.listen(`games.${game.code}.nay`, updateNay)
       const players = await firebase.collectionAsList(`games.${game.code}.players`)
-      console.log('Players', players)
+
       setPlayerCount(players.length)
     }
     setup()
@@ -61,21 +61,36 @@ function Accuse({game}) {
   }
 
   if ((playerCount -1) <= (yay + nay)) {
-    setTimeout(() => {
-      nayAll.forEach((i) => {
-        i.ref.delete()
-      })
-      yayAll.forEach((i) => {
-        i.ref.delete()
-      })
-      firebase.set(`games.${game.code}`, { gamePhase: "TIMER", accusedPlayer: null }, { merge: true })
+      const yayCount = new Array(yay).length
+      if (yayCount !== (playerCount -1)) {
+      setTimeout(() => {
+        nayAll.forEach((i) => {
+          i.ref.delete()
+        })
+        yayAll.forEach((i) => {
+          i.ref.delete()
+        })
+
+        firebase.set(`games.${game.code}`, { gamePhase: "TIMER", accusedPlayer: null }, { merge: true })
     }, 1000)
+      }
+  }
+
+  const yayCount = new Array(yay).length
+  if (yayCount == (playerCount -1)) {
+        nayAll.forEach((i) => {
+          i.ref.delete()
+        })
+        yayAll.forEach((i) => {
+          i.ref.delete()
+        })
+    firebase.set(`games.${game.code}`, { gamePhase: "GG", accusedPlayer: null }, { merge: true })
   }
 
   return (
     <Wrapper>
       <PlayersWrapper>
-        {renderAccused()}
+          {renderAccused()}
       </PlayersWrapper>
     </Wrapper>
   )

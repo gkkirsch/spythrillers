@@ -25,7 +25,7 @@ function Spy({game, player}) {
   }, [])
 
   const handleAccuseClick = (player) => () => {
-    firebase.set(`games.${game.code}`, { gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
+    firebase.set(`games.${game.code}`, { accused: true, gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
     firebase.set(`games.${game.code}.players.${PLAYER_ID}`, { accusedSomeone: true }, {merge: true})
   }
 
@@ -36,6 +36,10 @@ function Spy({game, player}) {
         <Location>{location}</Location>
       )
     })
+  }
+
+  const handleEndClick = () => {
+    firebase.set(`games.${game.code}`, { gamePhase: "GG" }, {merge: true})
   }
 
   if (!showLocations) {
@@ -55,7 +59,7 @@ function Spy({game, player}) {
         <V>E</V>
       </ViewAccuse>
       <Title>You are the SPY</Title>
-      <EndGame>END GAME</EndGame>
+      <EndGame onClick={handleEndClick}>END GAME</EndGame>
       <SubTitle>Locations</SubTitle>
       <Locations>
         {renderLocations()}

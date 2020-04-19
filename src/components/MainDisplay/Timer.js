@@ -21,10 +21,8 @@ const getRandom = (arr) => {
 }
 
 function Timer({game}) {
-  console.log('GAME', game)
-  const seconds = game.timer != 0 ? game.timer : game.seconds;
   const firebase = useFirebase();
-  const mili = useCountdown(() => Date.now() + (seconds * 1000));
+  const mili = useCountdown(() => Date.now() + game.timer);
   const secondsLeft = mili / 1000;
   // const [timer, setTimer] = useState(180)
   const [spy, setSpy] = useState({})
@@ -39,7 +37,7 @@ function Timer({game}) {
       const location = getRandom(locations)
       firebase.set(`games.${game.code}`, { location }, { merge: true })
     }
-    setup()
+    if (!game.accused) setup()
   }, [])
 
   if (secondsLeft <= 60) {

@@ -10,12 +10,16 @@ import Settings from './components/Settings'
 import images from 'components/characters'
 import logo from 'images/spy-thrillers-small.jpg';
 
+const optimiseImageLoading = () => {
+  new Image().src = logo;
+  Object.values(images).forEach((src) => {
+    new Image().src = src
+  });
+}
+
 function App() {
   useEffect(() => {
-    new Image().src = logo;
-    Object.values(images).forEach((src) => {
-      new Image().src = src
-    });
+    optimiseImageLoading()
   })
 
   return (

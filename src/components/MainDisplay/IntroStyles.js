@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { Link } from "react-router-dom";
 import { merge, tada, fadeInUp, pulse, zoomIn, fadeIn } from 'react-animations';
 
 const bounceAnimation = keyframes`${merge(tada, fadeInUp)}`;
@@ -15,12 +16,23 @@ export const Wrapper = styled.div`
   justify-content: center;
   background-color: #14171C;
   height: 100vh;
+  width: 100%;
+`;
+
+export const CountDown = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 304px;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
 `;
 
 export const Header = styled.div`
   transition: all 1s ease-out;
   position: relative;
-  width: 45%;
+  width: 35%;
 `;
 
 export const Logo = styled.img`
@@ -49,15 +61,18 @@ export const SubText = styled.div`
 `;
 
 export const PlayersWrapper = styled.div`
-  width: 75%;
+  min-height: 240px;
+  width: 95%;
   padding-top: 16px;
   padding-bottom: 16px;
+  flex-wrap: wrap;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  transition: all 1s;
 `;
 
 export const Player = styled.img`
-  width: 65%;
+  width: 55%;
 `;
 
 export const AnimateCode = styled.div`
@@ -69,11 +84,29 @@ export const AnimateCode = styled.div`
 
 export const PlayerWrapper = styled.div`
   animation: 1s ${bounceAnimation};
-  font-size: 2vw;
+  font-size: 1.5vw;
+  width: 16%;
   font-weight: 700;
+  margin-top: 32px;
   text-transform: uppercase;
   color: #F3DE21;
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+export const Settings = styled(Link)`
+  text-decoration: none;
+  padding: 8px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #e02712;
+  font-weight: 700;
+  text-transform: uppercase;
+  &:hover {
+   color: #F3DE21
+  }
 `;

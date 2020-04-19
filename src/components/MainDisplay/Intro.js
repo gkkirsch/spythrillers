@@ -1,16 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
-import { CountDown, Wrapper, Logo, Header, GameCode, SubText, Player, PlayersWrapper, PlayerWrapper, AnimateCode } from './MainDisplayStyles';
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
 import { useFirebase } from 'components/Firebase';
-import styled, { keyframes } from 'styled-components';
-import { merge, tada, fadeInUp, pulse, zoomIn, fadeIn } from 'react-animations';
+import {
+  Settings,
+  CountDown,
+  Wrapper,
+  Logo,
+  Header,
+  GameCode,
+  SubText,
+  Player,
+  PlayersWrapper,
+  PlayerWrapper,
+  AnimateCode
+} from './IntroStyles';
 import logo from 'images/spy-thrillers.jpg';
 import images from 'components/characters'
 import sounds from 'audio/sounds';
 
 let mutePlayers = true
 
-const playCharacterSound = (snapshot) => {
+const listenSelectedAvatars = (snapshot) => {
   snapshot.docChanges().forEach((change) => {
     if (change.type === "added") {
       const avatar = change.doc.id
@@ -20,67 +30,33 @@ const playCharacterSound = (snapshot) => {
   })
 }
 
-function Intro({game, gameCode}) {
-  const firebase = useFirebase();
-  const [countDown, setCountDown] = useState(null);
-  const [players, setPlayers] = useState([]);
-  let order = 1
+function Intro({game, players}) {
+  const firebase = useFirebase(`games.${game.code}`);
 
-  const updateGame = (snapshot) => {
-    if (snapshot.exists) {
-      const {countDown} = snapshot.data()
-      setCountDown(countDown)
-    }
+  const setup = async () => {
+    firebase.listen("selectedAvatars", listenSelectedAvatars)
   }
 
-  const updatePlayers = (snapshot) => {
-    const currentPlayers = snapshot.docs.reduce((acc, player) => {
-      if (player.data().avatar) {
-        return [...acc, ...[{...player.data(), id: player.id, order: order}]]
-      }
-      order = order + 1;
-      return acc;
-    }, [])
-    setPlayers([...players, ...currentPlayers])
-}
-
   useEffect(() => {
-    console.log('YOYO', game)
-players.forEach((player) => {
-      console.log('PLAYER', player)
-      firebase.set(`games.${gameCode}.players.${player.id}`, { spy: false, accusedSomeone: false }, { merge: true })
+    players.forEach((player) => {
+      firebase.set(`players.${player.id}`, { spy: false, accusedSomeone: false })
     })
-}, [players])
+  }, [players])
 
   useEffect(() => {
-    setTimeout(() => {
-      mutePlayers = false
-    }, 5000)
-    return () => {
-      mutePlayers = true
-    }
-  }, [])
-
-  useEffect(() => {
-    firebase.set(`games.${gameCode}`, { timer: game.seconds * 1000}, {merge: true})
+    firebase.set({ timer: game.seconds * 1000})
   }, [game.seconds])
 
   useEffect(() => {
+    setTimeout(() => mutePlayers = false, 5000)
 
-    const image = new Image()
-    image.src = logo;
-
-    const setup = async () => {
-      firebase.listen(`games.${gameCode}`, updateGame)
-      firebase.listen(`games.${gameCode}.players`, updatePlayers)
-      firebase.listen(`games.${gameCode}.selectedAvatars`, playCharacterSound)
-    }
     setup()
+
+    return () => mutePlayers = true
   }, [firebase])
 
   const renderPlayers = () => {
-    const sortedPlayers = players.sort((a, b) =>  a.order - b.order);
-    return sortedPlayers.map((player) => {
+    return players.map((player) => {
       return (
         <PlayerWrapper key={player.id}>
           {player.name}
@@ -90,34 +66,23 @@ players.forEach((player) => {
     })
   }
 
-  const renderStartHeader = () => {
-    if (countDown) return (
-      <Header>
-        <CountDown>{countDown}</CountDown>
-      </Header>
-    )
-
+  const renderEnterCode = () => {
+    if (game.countDown) return <SubText>{game.countDown}</SubText>
     return (
-      <Header>
-        <Logo src={logo} />
-        <AnimateCode>
-          <SubText>
-            enter the secret code
-          </SubText>
-          <GameCode>
-            {gameCode}
-          </GameCode>
-        </AnimateCode>
-      </Header>
+      <AnimateCode>
+        <SubText>enter the secret code</SubText>
+        <GameCode>{game.code}</GameCode>
+      </AnimateCode>
     )
   }
 
   return (
     <Wrapper>
-      <SetCountDown to="/settings">
-        Settings
-      </SetCountDown>
-        {renderStartHeader()}
+      <Settings to="/settings">Settings</Settings>
+      <Header>
+        <Logo src={logo} />
+        {renderEnterCode()}
+      </Header>
       <PlayersWrapper>
         {renderPlayers()}
       </PlayersWrapper>
@@ -126,19 +91,3 @@ players.forEach((player) => {
 }
 
 export default Intro;
-
-const SetCountDown = styled(Link)`
-  text-decoration: none;
-  padding: 8px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-  font-size: 14px;
-  color: #e02712;
-  font-weight: 700;
-  text-transform: uppercase;
-  &:hover {
-   color: #F3DE21
-  }
-`;

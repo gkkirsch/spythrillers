@@ -10,22 +10,6 @@ const config = {
   // messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
 };
 
-const pathToArray = (path) => {
-  const pathArray = path.split(".")
-  let collections = [];
-  let docs = [];
-  pathArray.forEach((elem, i) => {
-    if ((i + 1) % 2 === 0) {
-      docs.push(elem)
-    } else {
-      collections.push(elem)
-    }
-  })
-  return collections.map((value, index) => {
-    return [value, docs[index]]
-  })
-}
-
 const deepRef = (obj, [[collection, doc], ...restPath]) => {
   let newObj = obj.collection(collection)
   if (doc) { newObj = newObj.doc(doc) }
@@ -35,20 +19,48 @@ const deepRef = (obj, [[collection, doc], ...restPath]) => {
   return deepRef(newObj, restPath)
 }
 
+const createPath = (basePath, path) => {
+  if (path && basePath) return `${basePath}.${path}`;
+  if (basePath && !path) return basePath;
+  return path;
+}
+
 class Firebase {
   constructor() {
     const app = firebase.initializeApp(config);
     this.firestore = app.firestore();
+    this.basePath = null
+  }
+
+  setBasePath(path) {
+    this.basePath = path;
+  }
+
+  pathToArray(path) {
+    const newPath = createPath(this.basePath, path);
+    const pathArray = newPath.split(".")
+    let collections = [];
+    let docs = [];
+    pathArray.forEach((elem, i) => {
+      if ((i + 1) % 2 === 0) {
+        docs.push(elem)
+      } else {
+        collections.push(elem)
+      }
+    })
+    return collections.map((value, index) => {
+      return [value, docs[index]]
+    })
   }
 
   listen(path, func) {
-    const pathArray = pathToArray(path)
+    const pathArray = this.pathToArray(path)
     const docRef = deepRef(this.firestore, pathArray)
     return docRef.onSnapshot(func)
   }
 
   async collectionAsObject(path, filters = null) {
-    const pathArray = pathToArray(path)
+    const pathArray = this.pathToArray(path)
 
     const docRef = deepRef(this.firestore, pathArray)
     const result = await docRef.get()
@@ -61,7 +73,7 @@ class Firebase {
   }
 
   async collectionAsList(path, filters = null) {
-    const pathArray = pathToArray(path)
+    const pathArray = this.pathToArray(path)
 
     const docRef = deepRef(this.firestore, pathArray)
     const result = await docRef.get()
@@ -73,7 +85,7 @@ class Firebase {
 
   async exists(path) {
     try {
-      const pathArray = pathToArray(path)
+      const pathArray = this.pathToArray(path)
       const docRef = deepRef(this.firestore, pathArray)
       const result = await docRef.get()
       return result.exists;
@@ -85,7 +97,7 @@ class Firebase {
 
   getRef(path) {
     try {
-      const pathArray = pathToArray(path)
+      const pathArray = this.pathToArray(path)
       const ref = deepRef(this.firestore, pathArray)
       return ref;
     }
@@ -96,7 +108,7 @@ class Firebase {
 
   async get(path) {
     try {
-      const pathArray = pathToArray(path)
+      const pathArray = this.pathToArray(path)
       const docRef = deepRef(this.firestore, pathArray)
       const result = await docRef.get()
       return result.data();
@@ -106,9 +118,9 @@ class Firebase {
     }
   }
 
-  async set(path, data, options = {merge: false}) {
+  async set(path = null, data = {}, options = {merge: true}) {
     try {
-      const pathArray = pathToArray(path)
+      const pathArray = this.pathToArray(path)
       const docRef = deepRef(this.firestore, pathArray)
       const result = await docRef.set(data, options)
       return result;
@@ -119,7 +131,7 @@ class Firebase {
   }
 
   addToList(path, data, options = {}) {
-    const pathArray = pathToArray(path)
+    const pathArray = this.pathToArray(path)
     const docRef = deepRef(this.firestore, pathArray)
     return docRef.add(data)
   }

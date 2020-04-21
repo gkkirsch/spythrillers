@@ -3,14 +3,16 @@ import { Wrapper, Logo, Header, Input, Heading, Submit, Joining, Error } from '.
 import { useFirebase } from 'components/Firebase';
 import logo from 'images/spy-thrillers-small.jpg';
 import CodeInput from './CodeInput';
+import SelectCharacter from './SelectCharacter';
 
-function Join({onJoin, onLeave}) {
+function Join({onJoin}) {
   const firebase = useFirebase();
   const [name, setName] = useState("");
   const [gameCode, setGameCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
+  const [step, setStep] = useState("ENTER_CODE");
   const nameInput = React.createRef()
 
   useEffect(() => {
@@ -35,17 +37,13 @@ function Join({onJoin, onLeave}) {
     return !exists
   }
 
-  const enterGame = async (gameCode) => {
+  const validGame = async (gameCode) => {
     const game = await firebase.get(`games.${gameCode}`)
-    if (!game) return [false, "A game with that code hasn't been started.", null]
+    if (!game) return [false, "A game with that code hasn't been started."]
 
     const isUnique = await nameIsUnique()
-    if (!isUnique) return [false, "What are the chances!!! Someone else's mother used that same name.", null]
-
-    // Success
-    const playerRef = await firebase.firestore.collection('games').doc(gameCode).collection('players').doc()
-    playerRef.set({avatar: null, name: name, id: playerRef.id});
-    return [true, game, playerRef.id]
+    if (!isUnique) return [false, "What are the chances!!! Someone else's mother used that same name."]
+    return [true, null]
   }
 
   const handleSubmit = async () => {
@@ -53,38 +51,30 @@ function Join({onJoin, onLeave}) {
     if (name.length < 2) return setError("Your name has to be more than a single letter. C'mon GEEZ.")
     if (name.length > 10) return setError("Your name is a little lengthy, don't be offended just shorten it.")
     setJoining(true)
-    const [success, body, playerId] = await enterGame(gameCode)
-    if (success) return onJoin(body, playerId)
+    const [valid, error] = await validGame(gameCode)
+    if (valid) setStep("SELECT_CHARACTER")
     // If your game has been deleted then you shouldn't be in a game.
-    onLeave()
-    setError(body)
+    setError(error)
     setJoining(false)
   }
 
   if (loading) return <Wrapper />
-
-  return (
-    <Wrapper>
-      <Header>
-        <Logo src={logo} />
-      </Header>
-      <Heading>
-        Enter Secret Code
-      </Heading>
-      <CodeInput
-        value={gameCode}
-        onChange={updateGameCode}
-      />
-      <Heading>
-        First Name
-      </Heading>
-      <Input ref={nameInput} value={name} onChange={(e) => updateName(e.target.value)}/>
-      <Error>
-        { error }
-      </Error>
-      <Submit onClick={handleSubmit}>{(joining) ? <Joining>Joining</Joining> : "Play"}</Submit>
-    </Wrapper>
-  )
+  if (step === "SELECT_CHARACTER") return <SelectCharacter onJoin={onJoin} gameCode={gameCode} name={name} />
+  if (step === "ENTER_CODE") {
+    return (
+      <Wrapper>
+        <Header>
+          <Logo src={logo} />
+        </Header>
+        <Heading>Enter Secret Code</Heading>
+        <CodeInput value={gameCode} onChange={updateGameCode} />
+        <Heading>First Name</Heading>
+        <Input ref={nameInput} value={name} onChange={(e) => updateName(e.target.value)}/>
+        <Error>{ error }</Error>
+        <Submit onClick={handleSubmit}>{(joining) ? <Joining>Joining</Joining> : "Play"}</Submit>
+      </Wrapper>
+    )
+  }
 }
 
 export default Join;

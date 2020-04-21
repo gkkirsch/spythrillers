@@ -6,29 +6,23 @@ import images from 'components/characters'
 import { slideInLeft } from 'react-animations';
 const slideLeft = keyframes`${slideInLeft}`;
 
-const PLAYER_ID = Cookies.get('playerId');
-
-function Spy({game, player}) {
+function Spy({game, currentPlayer, players}) {
   const firebase = useFirebase();
   const [locations, setLocations] = useState([])
-  const [players, setPlayers] = useState([]);
   const [showLocations, setShowLocations] = useState(false)
 
   useEffect(() => {
     const setup = async () => {
       const { locations } = await firebase.get(`locations.${game.locationSet}`)
-      const players = await firebase.collectionAsList(`games.${game.code}.players`)
       setLocations(locations)
-      setPlayers(players)
     }
     setup()
   }, [])
 
-  const handleAccuseClick = (player) => () => {
-    firebase.set(`games.${game.code}`, { accused: true, gamePhase: "ACCUSE", accusedPlayer: player }, {merge: true})
-    firebase.set(`games.${game.code}.players.${PLAYER_ID}`, { accusedSomeone: true }, {merge: true})
+  const handleAccuseClick = (accusedPlayer) => () => {
+    firebase.set(`games.${game.code}`, { gamePhase: "ACCUSE", accusedPlayer })
+    firebase.set(`games.${game.code}.players.${currentPlayer.id}`, { accusedSomeone: true })
   }
-
 
   const renderLocations = () => {
     return locations.map((location) => {
@@ -39,7 +33,7 @@ function Spy({game, player}) {
   }
 
   const handleEndClick = () => {
-    firebase.set(`games.${game.code}`, { gamePhase: "GG" }, {merge: true})
+    firebase.set(`games.${game.code}`, { gamePhase: "GG" })
   }
 
   if (!showLocations) {
@@ -70,8 +64,8 @@ function Spy({game, player}) {
 
   const renderPlayers = () => {
     const sortedPlayers = players.sort((a, b) =>  a.order - b.order);
-    const filteredPlayers = sortedPlayers.filter((yo) => {
-      return yo.id != player.id
+    const filteredPlayers = sortedPlayers.filter((filteredPlayer) => {
+      return filteredPlayer.id != currentPlayer.id
     })
     return filteredPlayers.map((player) => {
       return (
@@ -102,11 +96,11 @@ function Spy({game, player}) {
         <V>S</V>
       </ViewLocations>
       <Title>You are the SPY</Title>
-      <EndGame>END GAME</EndGame>
-        {player.accusedSomeone &&
+      <EndGame onClick={handleEndClick}>END GAME</EndGame>
+        {currentPlayer.accusedSomeone &&
           <SubTitle>You have already accused someone.</SubTitle>
         }
-        {!player.accusedSomeone &&
+        {!currentPlayer.accusedSomeone &&
         <>
           <SubTitle>Tap Player to Accuse</SubTitle>
           <PlayersWrapper>

@@ -29,16 +29,10 @@ class Firebase {
   constructor() {
     const app = firebase.initializeApp(config);
     this.firestore = app.firestore();
-    this.basePath = null
-  }
-
-  setBasePath(path) {
-    this.basePath = path;
   }
 
   pathToArray(path) {
-    const newPath = createPath(this.basePath, path);
-    const pathArray = newPath.split(".")
+    const pathArray = path.split(".")
     let collections = [];
     let docs = [];
     pathArray.forEach((elem, i) => {
@@ -106,6 +100,19 @@ class Firebase {
     }
   }
 
+  async deleteCollection(path) {
+    // Get a new write batch
+    const batch = this.firestore.batch();
+
+    const pathArray = this.pathToArray(path)
+    const snapshot = await deepRef(this.firestore, pathArray).get()
+    snapshot.docs.map((val) => {
+        batch.delete(val.ref)
+    })
+
+    batch.commit()
+  }
+
   async get(path) {
     try {
       const pathArray = this.pathToArray(path)
@@ -118,12 +125,24 @@ class Firebase {
     }
   }
 
-  async set(path = null, data = {}, options = {merge: true}) {
+  async set(path, data = {}, options = {merge: true}) {
     try {
       const pathArray = this.pathToArray(path)
       const docRef = deepRef(this.firestore, pathArray)
       const result = await docRef.set(data, options)
       return result;
+    }
+    catch(error) {
+      console.log('ERROR SET', error)
+    }
+  }
+
+  async create(path, data = {}) {
+    try {
+      const pathArray = this.pathToArray(path)
+      const docRef = deepRef(this.firestore, pathArray).doc()
+      const result = await docRef.set({...data, id: docRef.id})
+      return docRef.id;
     }
     catch(error) {
       console.log('ERROR SET', error)

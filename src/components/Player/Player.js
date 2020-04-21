@@ -3,7 +3,6 @@ import Cookies from 'js-cookie';
 import styled from 'styled-components';
 import { useFirebase } from 'components/Firebase';
 import Join from './Join';
-import SelectCharacter from './SelectCharacter';
 import GetReady from './GetReady';
 import Spy from './Spy/Spy';
 import Accuse from './Accuse/Accuse';
@@ -29,78 +28,86 @@ const Wrapper = styled.div`
 
 
 function Player() {
+  const [loading, setLoading] = useState(true)
   const [game, setGame] = useState({})
   const [player, setPlayer] = useState({})
-  const [loading, setLoading] = useState(true)
+  const [players, setPlayers] = useState([])
   const firebase = useFirebase();
 
-  const updateGame = (snapshot) => {
+  const listenGameUpdate = (snapshot) => {
     setGame({...snapshot.data()})
     setLoading(false)
   }
 
-  const updatePlayer = (snapshot) => {
+  const listenPlayerUpdate = (snapshot) => {
     if (snapshot.exists) {
       setPlayer({...snapshot.data()})
     }
   }
 
-  useEffect(() => {
-    setLoading(true)
+  const listenPlayersUpdate = (snapshot) => {
+    const updatedPlayers = snapshot.docs.map((doc) => doc.data())
+    setPlayers(updatedPlayers)
+  }
 
-    const alreadyInGame = async () => {
-      const gameCode = Cookies.get('gameCode')
-      const playerId = Cookies.get('playerId')
-      // If player isn't in a game currently
-      if (!gameCode) {
-        Cookies.remove('playerId')
+  useEffect(() => {
+    const getExistingGame = async () => {
+      const code = localStorage.getItem('gameCode');
+      const playerId = localStorage.getItem('playerId')
+      if (!code || !playerId) {
+        // localStorage.removeItem('playerId')
         setLoading(false) ;
         return;
       }
 
       // The player had a game, but it might not still be going
-      const curGame = await firebase.get(`games.${gameCode}`)
+      const curGame = await firebase.get(`games.${code}`)
+      setLoading(false)
 
       if (curGame) {
-        console.log("you are already in a game", curGame)
-        // setGame(curGame)
-        firebase.listen(`games.${gameCode}`, updateGame)
-        firebase.listen(`games.${gameCode}.players.${playerId}`, updatePlayer)
-        // Start listening to the game
-        // setPlayer({name: Cookies.get('name')})
-      } else {
-        // If they are not then clear their cookies
-        Cookies.remove('playerId')
-        Cookies.remove('gameCode')
-        setLoading(false)
+        firebase.listen(`games.${code}`, listenGameUpdate);
+        firebase.listen(`games.${code}.players.${playerId}`, listenPlayerUpdate);
+        firebase.listen(`games.${code}.players`, listenPlayersUpdate)
+        return;
       }
+
+      // localStorage.removeItem('playerId')
+      // localStorage.removeItem('gameCode')
+      setLoading(false)
     }
-    alreadyInGame()
+
+    getExistingGame()
   }, [firebase])
 
-  const handleJoin = (game, playerId) => {
-    Cookies.set('playerId', playerId, { expires: 1 })
-    Cookies.set('gameCode', game.code, { expires: 1 })
-    firebase.listen(`games.${game.code}`, updateGame)
-    firebase.listen(`games.${game.code}.players.${playerId}`, updatePlayer)
-    // setPlayer({name: name})
+  const handleJoin = async (gameCode, name, avatar) => {
+    firebase.set(`games.${gameCode}.selectedAvatars.${avatar}`, {used: true});
+    const players = await firebase.collectionAsList(`games.${gameCode}.players`)
+
+    const firstPlayer = !players.length
+    const playerId = await firebase.create(`games.${gameCode}.players`, {avatar, name, firstPlayer});
+
+    firebase.listen(`games.${gameCode}`, listenGameUpdate)
+    firebase.listen(`games.${gameCode}.players.${playerId}`, listenPlayerUpdate)
+
+    localStorage.setItem('playerId', playerId)
+    localStorage.setItem('gameCode', gameCode)
   }
 
   const handleLeave = () => {
-    Cookies.remove('playerId')
-    Cookies.remove('gameCode')
+    localStorage.removeItem('playerId')
+    localStorage.removeItem('gameCode')
     setGame({})
   }
 
   const renderGamePhase = () => {
-    if (!player.avatar) return <SelectCharacter game={game} player={player} />
+    if (game.loading) return null;
     switch (game.gamePhase) {
       case "GATHER_FRIENDS":
         if (game.countDown && !player.firstPlayer) return <CountDown>{game.countDown}</CountDown>
         return <GetReady game={game} player={player} />;
       case "TIMER":
-        if (player.spy) return <Spy game={game} player={player} />
-        return <Detective game={game} player={player} />
+        if (player.spy) return <Spy game={game} currentPlayer={player} players={players} />
+        return <Detective game={game} currentPlayer={player} players={players} />
       case "ACCUSE":
         return <Accuse game={game} player={player} />;
       case "GG":
@@ -112,10 +119,11 @@ function Player() {
   }
 
   if (loading) return <Wrapper></Wrapper>;
+  if (!player) return <Wrapper></Wrapper>;
 
   return (
     <Wrapper>
-      {!game.gamePhase && <Join onJoin={handleJoin} onLeave={handleLeave} />}
+      {!game.gamePhase && <Join onJoin={handleJoin} />}
       {game.gamePhase && renderGamePhase()}
     </Wrapper>
   )

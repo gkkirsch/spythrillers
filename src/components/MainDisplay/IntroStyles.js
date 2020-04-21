@@ -23,8 +23,8 @@ export const CountDown = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 304px;
-  color: #e02712;
+  font-size: 3vw;
+  color: #F3DE21;
   font-weight: 700;
   text-transform: uppercase;
 `;
@@ -40,6 +40,7 @@ export const Logo = styled.img`
   animation: 1s ${zoomAnimation};
   max-width: 100%;
   height: auto;
+  margin-bottom: 8px;
 `;
 
 export const GameCode = styled.div`

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
 import { useFirebase } from 'components/Firebase';
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
@@ -12,9 +11,9 @@ function toTime(millis) {
 }
 
 function Settings() {
-  const GAME = Cookies.get('gameCode');
   const firebase = useFirebase();
   const [seconds, setSeconds] = useState(null)
+  const [gameCode, setGameCode] = useState(null)
 
   const getSeconds = () => {
     if (!seconds) return null;
@@ -23,8 +22,11 @@ function Settings() {
   }
 
   useEffect(() => {
+    const code = localStorage.getItem('gameCode');
+    setGameCode(code)
+
     async function fetchData() {
-      const game = await firebase.get(`games.${GAME}`);
+      const game = await firebase.get(`games.${code}`);
       setSeconds(game.seconds)
     }
     fetchData();
@@ -34,7 +36,7 @@ function Settings() {
     sounds["tick"].play()
     const newSec = seconds + 10
     setSeconds(newSec)
-    firebase.set(`games.${GAME}`, { seconds: newSec }, {merge: true})
+    firebase.set(`games.${gameCode}`, { seconds: newSec })
   }
 
   const minus30 = () => {
@@ -42,7 +44,7 @@ function Settings() {
     sounds["tick"].play()
     const newSec = seconds - 10
     setSeconds(newSec)
-    firebase.set(`games.${GAME}`, { seconds: newSec }, {merge: true})
+    firebase.set(`games.${gameCode}`, { seconds: newSec })
   }
 
   return (
@@ -51,7 +53,7 @@ function Settings() {
       <Form>
         <Label>Timer</Label>
         <Timer>
-          <Add30 onClick={add30}>+ 10</Add30><Time>{getSeconds()}</Time><Add30 onClick={minus30}>- 10</Add30>
+          <Button onClick={add30}>+ 10</Button><Time>{getSeconds()}</Time><Button onClick={minus30}>- 10</Button>
         </Timer>
       </Form>
     </Wrapper>
@@ -116,7 +118,7 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-export const Add30 = styled.div`
+const Button = styled.div`
   margin-left: 18px;
   margin-right: 18px;
   transition: all 1s ease-out;

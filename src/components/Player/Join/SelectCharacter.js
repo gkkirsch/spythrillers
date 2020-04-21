@@ -11,7 +11,7 @@ import {
 import { useFirebase } from 'components/Firebase';
 import images from 'components/characters'
 
-function SelectCharacter({game, player}) {
+function SelectCharacter({gameCode, name, onJoin}) {
   const firebase = useFirebase();
   const [avatars, setAvatars] = useState([])
   const [usedAvatars, setUsedAvatars] = useState([])
@@ -38,7 +38,8 @@ function SelectCharacter({game, player}) {
 
   useEffect(() => {
     document.body.scrollTop = document.documentElement.scrollTop = 0;
-    const unsubscribe = firebase.listen(`games.${game.code}.selectedAvatars`, avatarSelected)
+    const unsubscribe = firebase.listen(`games.${gameCode}.selectedAvatars`, avatarSelected)
+
     const getAvatars = async () => {
       const result = await firebase.collectionAsList('avatars')
       setAvatars(result)
@@ -46,16 +47,10 @@ function SelectCharacter({game, player}) {
     getAvatars()
 
     return () => unsubscribe();
-  }, [firebase, game.code])
+  }, [firebase, gameCode])
 
-  const handleAvatarClick = (avatarName) => async () => {
-    firebase.set(`games.${game.code}.selectedAvatars.${avatarName}`, {used: true}, {merge: true})
-    const players = await firebase.collectionAsList(`games.${game.code}.players`)
-    if (players.length <= 1) {
-      firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: true}, {merge: true})
-    } else {
-      firebase.set(`games.${game.code}.players.${player.id}`, {avatar: avatarName, firstPlayer: false}, {merge: true})
-    }
+  const handleAvatarClick = (avatar) => () => {
+    onJoin(gameCode, name, avatar)
   }
 
   const renderAvatars = () => {

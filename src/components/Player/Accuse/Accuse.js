@@ -10,20 +10,14 @@ function Accuse({game, player}) {
   const [ vote, setVote ] = useState({});
   const accusedPlayer = game.accusedPlayer
 
-  useEffect(() => {
-    const setup = async () => {
-    }
-    setup()
-  }, [])
-
-  const handleSpyClick = () => {
-    firebase.addToList(`games.${game.code}.yay`, player)
-    setVote("YAY")
+  const handleAccuseClick = () => {
+    firebase.addToList(`games.${game.code}.accusers`, player)
+    setVote("ACCUSE")
   }
 
-  const handleNotSpyClick = () => {
-    firebase.addToList(`games.${game.code}.nay`, player)
-    setVote("NAY")
+  const handleSupportClick = () => {
+    firebase.addToList(`games.${game.code}.supporters`, player)
+    setVote("SUPPORT")
   }
 
   const renderAccused = () => {
@@ -35,25 +29,25 @@ function Accuse({game, player}) {
     )
   }
 
-  if  (player.id == accusedPlayer.id) {
+  if (player.id == accusedPlayer.id) {
     return <CenterSpy>YOU'RE BEING ACCUSED</CenterSpy>
   }
 
-  if (vote === "YAY") {
+  if (vote === "ACCUSE") {
     return <CenterSpy><div>voted</div><div>SPY!</div></CenterSpy>
   }
 
-  if (vote === "NAY") {
-    return <CenterNotSpy><div>voted</div><div> NOT SPY</div></CenterNotSpy>
+  if (vote === "SUPPORT") {
+    return <CenterNotSpy><div>voted</div><div>NOT SPY</div></CenterNotSpy>
   }
 
   return (
     <Wrapper>
-      <PlayerOption onClick={handleSpyClick}>SPY!</PlayerOption>
+      <PlayerOption onClick={handleAccuseClick}>SPY!</PlayerOption>
       <PlayersWrapper>
         {renderAccused()}
       </PlayersWrapper>
-      <PlayerOption onClick={handleNotSpyClick}>NOT SPY</PlayerOption>
+      <PlayerOption onClick={handleSupportClick}>NOT SPY</PlayerOption>
     </Wrapper>
   )
 }

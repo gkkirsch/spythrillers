@@ -5,92 +5,52 @@ import images from 'components/characters'
 import { slideInLeft } from 'react-animations';
 const slideLeft = keyframes`${slideInLeft}`;
 
-function Accuse({game}) {
+function Accuse({game, players, accusers, supporters, changeGamePhase}) {
   const firebase = useFirebase();
-  const [ yay, setYay ] = useState(0);
-  const [ yayAll, setYayAll ] = useState([]);
-  const [ nayAll, setNayAll ] = useState([]);
-  const [ nay, setNay ] = useState(0);
-  const [ playerCount, setPlayerCount ] = useState(10);
-  const accusedPlayer = game.accusedPlayer
 
-  const updateYay = (snapshot) => {
-    setYay(snapshot.size)
-    setYayAll(snapshot.docs)
-  }
+  const totalPlayers = players.length
+  const totalAccusers = accusers.length
+  const totalSupporters = supporters.length
+  const neededVotes = totalPlayers - 1
 
-  const updateNay = (snapshot) => {
-    setNay(snapshot.size)
-    setNayAll(snapshot.docs)
-  }
-
-  const renderYay = () => {
-    const count = new Array(yay).fill(undefined)
-    return count.map(() => {
+  const renderAccusers = () => {
+    return accusers.map(() => {
       return <Yay>SPY!</Yay>
     })
   }
 
-  const renderNay = () => {
-    const count = new Array(nay).fill(undefined)
-    return count.map(() => {
+  const renderSupporters = () => {
+    return supporters.map(() => {
       return <Nay>NOT SPY!</Nay>
     })
   }
 
-  useEffect(() => {
-    const setup = async () => {
-      firebase.listen(`games.${game.code}.yay`, updateYay)
-      firebase.listen(`games.${game.code}.nay`, updateNay)
-      const players = await firebase.collectionAsList(`games.${game.code}.players`)
-
-      setPlayerCount(players.length)
-    }
-    setup()
-  }, [])
-
-  const renderAccused = () => {
+  const renderVotes = () => {
+    const { accusedPlayer } = game;
     return (
       <PlayerWrapper key={accusedPlayer.id}>
         {accusedPlayer.name}
         <Player src={images[accusedPlayer.avatar]} />
-        {renderYay()}
-        {renderNay()}
+        {renderAccusers()}
+        {renderSupporters()}
       </PlayerWrapper>
     )
   }
 
-  if ((playerCount -1) <= (yay + nay)) {
-      const yayCount = new Array(yay).length
-      if (yayCount !== (playerCount -1)) {
-      setTimeout(() => {
-        nayAll.forEach((i) => {
-          i.ref.delete()
-        })
-        yayAll.forEach((i) => {
-          i.ref.delete()
-        })
+  if (neededVotes == (totalAccusers + totalSupporters)) {
+    if (totalAccusers !== neededVotes) {
+      setTimeout(() => { changeGamePhase("TIMER") }, 1000)
+    }
 
-        firebase.set(`games.${game.code}`, { gamePhase: "TIMER", accusedPlayer: null }, { merge: true })
-    }, 1000)
-      }
-  }
-
-  const yayCount = new Array(yay).length
-  if (yayCount == (playerCount -1)) {
-        nayAll.forEach((i) => {
-          i.ref.delete()
-        })
-        yayAll.forEach((i) => {
-          i.ref.delete()
-        })
-    firebase.set(`games.${game.code}`, { gamePhase: "GG", accusedPlayer: null }, { merge: true })
+    if (totalAccusers == neededVotes) {
+      setTimeout(() => { changeGamePhase("GG") }, 1000)
+    }
   }
 
   return (
     <Wrapper>
       <PlayersWrapper>
-          {renderAccused()}
+        {renderVotes()}
       </PlayersWrapper>
     </Wrapper>
   )

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
 import { useFirebase } from 'components/Firebase';
 import {
   Settings,
-  CountDown,
   Wrapper,
   Logo,
   Header,
+  CountDown,
   GameCode,
   SubText,
   Player,
@@ -31,24 +30,24 @@ const listenSelectedAvatars = (snapshot) => {
 }
 
 function Intro({game, players}) {
-  const firebase = useFirebase(`games.${game.code}`);
-
-  const setup = async () => {
-    firebase.listen("selectedAvatars", listenSelectedAvatars)
-  }
+  const firebase = useFirebase();
 
   useEffect(() => {
     players.forEach((player) => {
-      firebase.set(`players.${player.id}`, { spy: false, accusedSomeone: false })
+      firebase.set(`games.${game.code}.players.${player.id}`, { spy: false, accusedSomeone: false })
     })
-  }, [players])
+  }, [firebase, players])
 
   useEffect(() => {
-    firebase.set({ timer: game.seconds * 1000})
-  }, [game.seconds])
+    firebase.set(`games.${game.code}`, { timer: game.seconds * 1000})
+  }, [firebase, game.seconds])
 
   useEffect(() => {
     setTimeout(() => mutePlayers = false, 5000)
+
+    const setup = async () => {
+      firebase.listen(`games.${game.code}.selectedAvatars`, listenSelectedAvatars)
+    }
 
     setup()
 
@@ -67,7 +66,12 @@ function Intro({game, players}) {
   }
 
   const renderEnterCode = () => {
-    if (game.countDown) return <SubText>{game.countDown}</SubText>
+    if (game.countDown) return (
+      <AnimateCode>
+        <SubText>game starting in</SubText>
+        <CountDown>{game.countDown}</CountDown>
+      </AnimateCode>
+    )
     return (
       <AnimateCode>
         <SubText>enter the secret code</SubText>

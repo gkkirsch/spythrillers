@@ -42,8 +42,7 @@ function FirstPlayer({game, player}) {
   }
 
   const renderCountdown = () => {
-    if (countDown !== "not ready") return <CountDown>{countDown}</CountDown>
-    if (countDown === "not ready") return <CountDown><Cancel>not ready</Cancel></CountDown>
+    if (countDown === "not ready") return <CountDown><Cancel>canceled</Cancel></CountDown>
     return <CountDown></CountDown>
   }
 
@@ -54,7 +53,6 @@ function FirstPlayer({game, player}) {
         <Heading>Once everyone has joined,</Heading>
         <Heading>press and hold <img alt="blam" style={{marginLeft: 10}} width="70px" height="100%" src={blam} /></Heading>
       </div>
-        {renderCountdown()}
       <Submit
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={handleSubmit}
@@ -66,6 +64,7 @@ function FirstPlayer({game, player}) {
       >
         <img alt="blam" width="120px" src={blam} />
       </Submit>
+        {renderCountdown()}
     </FirstPlayerWrapper>
   )
 }

@@ -20,7 +20,7 @@ const optimiseImageLoading = () => {
 function App() {
   useEffect(() => {
     optimiseImageLoading()
-  })
+  }, [])
 
   return (
     <Router>
